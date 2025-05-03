@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Crypto Alert API - Serverless Architecture with 3 Microservices
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: nodejs22.x
+    Architectures:
+      - x86_64
+    MemorySize: 128
+
+Resources:
+
+  # DynamoDB table for storing search history
+  CryptoSearchHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: CryptoSearchHistory
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAYPERREQUEST
+
+  # SQS Queue
+  CryptoEmailQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: CryptoEmailQueue
+
+  # Lambda: Get crypto price and enqueue email
+  GetPriceAndQueueEmailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetPriceAndQueueEmail
+      CodeUri: services/getPriceAndQueueEmail
+      Handler: dist/handler.handler
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /crypto-price
+            Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: CryptoSearchHistory
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt CryptoEmailQueue.QueueName
+      Environment:
+        Variables:
+          TABLE_NAME: CryptoSearchHistory
+          QUEUE_NAME: CryptoEmailQueue
+          DYNAMO_ENDPOINT:
+
+  # Lambda: SQS trigger to send email via SES
+  SendEmailFromQueueFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: SendEmailFromQueue
+      CodeUri: services/sendEmailFromQueue
+      Handler: dist/handler.handler
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt CryptoEmailQueue.Arn
+      Policies:
+        - SESCrudPolicy:
+            IdentityName: "*"  # or restrict to a verified identity
+
+  # Lambda: Get search history
+  GetSearchHistoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetSearchHistory
+      CodeUri: services/getSearchHistory
+      Handler: dist/handler.handler
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /search-history
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: CryptoSearchHistory
+
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
