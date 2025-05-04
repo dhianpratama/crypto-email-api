@@ -1,0 +1,9 @@
+{
+    "httpMethod": "GET",
+    "queryStringParameters": {
+      "email": "investor@example.com",
+      "limit": "5",
+      "sort": "desc"
+    }
+}
+  
