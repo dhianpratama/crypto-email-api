@@ -1,7 +1,7 @@
 {
-  "name": "get-search-history",
+  "name": "send-email-from-queue",
   "version": "1.0.0",
-  "description": "Lambda function to get search history",
+  "description": "Lambda function to send email, invoked by SQS",
   "main": "dist/handler.js",
   "scripts": {
     "build": "node build.js"

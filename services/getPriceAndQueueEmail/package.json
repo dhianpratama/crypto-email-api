@@ -1,22 +1,22 @@
 {
-    "name": "get-price-and-queue-email",
-    "version": "1.0.0",
-    "description": "Lambda function to fetch crypto price and send message to SQS",
-    "main": "dist/handler.js",
-    "scripts": {
-        "build": "node build.js"
-    },
-    "dependencies": {
-        "@aws-sdk/client-dynamodb": "^3.799.0",
-        "@aws-sdk/client-sqs": "^3.799.0",
-        "@aws-sdk/lib-dynamodb": "^3.799.0",
-        "axios": "^1.9.0",
-        "uuid": "^9.0.1"
-    },
-    "devDependencies": {
-        "@types/aws-lambda": "^8.10.149",
-        "@types/node": "^22.15.3",
-        "esbuild": "^0.25.3",
-        "typescript": "^5.8.3"
-    }
+  "name": "get-price-and-queue-email",
+  "version": "1.0.0",
+  "description": "Lambda function to fetch crypto price and send message to SQS",
+  "main": "dist/handler.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.799.0",
+    "@aws-sdk/client-sqs": "^3.799.0",
+    "@aws-sdk/lib-dynamodb": "^3.799.0",
+    "axios": "^1.9.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.149",
+    "@types/node": "^22.15.3",
+    "esbuild": "^0.25.3",
+    "typescript": "^5.8.3"
+  }
 }

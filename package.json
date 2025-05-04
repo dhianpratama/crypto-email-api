@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npx eslint . --ext .ts --fix",
-    "pretty": "npx prettier . --write"
+    "pretty": "npx prettier . --write",
+    "init-local": "ts-node scripts/init-local-dynamo.ts"
   },
   "keywords": [],
   "author": "",

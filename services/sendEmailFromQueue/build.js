@@ -12,11 +12,5 @@ esbuild
     alias: {
       '@shared': path.resolve(__dirname, '../../shared'),
     },
-    external: [
-      '@aws-sdk/client-sqs',
-      '@aws-sdk/client-dynamodb',
-      '@aws-sdk/lib-dynamodb',
-      '@aws-sdk/client-ses',
-    ],
   })
   .catch(() => process.exit(1));

@@ -25,7 +25,9 @@ export const handleGetSearchHistory = async (
     const emailFilter = queryParams.email;
     const limit = parseInt(queryParams.limit || '10', 10);
     const sort = (queryParams.sort || 'desc').toLowerCase();
-    const startKey = queryParams.startKey ? JSON.parse(decodeURIComponent(queryParams.startKey)) : undefined;
+    const startKey = queryParams.startKey
+      ? JSON.parse(decodeURIComponent(queryParams.startKey))
+      : undefined;
 
     let items: any[] = [];
     let lastEvaluatedKey: any = null;

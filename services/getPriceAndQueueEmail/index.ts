@@ -21,7 +21,7 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
 
   // Step 1: Try to get price from cache
   try {
-    price = await getPriceCache(crypto)
+    price = await getPriceCache(crypto);
   } catch (err) {
     console.warn('⚠️ Cache lookup failed:', err);
   }
@@ -29,7 +29,7 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
   // Step 2: Fallback to live CoinGecko if needed
   if (price === undefined) {
     try {
-      price = await tryFetchPriceFromCG(crypto)
+      price = await tryFetchPriceFromCG(crypto);
 
       if (price === undefined) {
         return {
@@ -43,7 +43,7 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
         id: crypto,
         price,
         updated: timestamp,
-      })
+      });
     } catch (err) {
       console.error('❌ Failed to fetch from CoinGecko:', err);
       return {

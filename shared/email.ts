@@ -20,29 +20,17 @@ export const sendEmail = async ({ to, subject, body }: EmailPayload) => {
     throw new Error('SES_SENDER is not set in environment variables');
   }
 
-  const ses = new SESClient({
-    region: CONFIG.REGION,
-  });
+  const ses = new SESClient({ region: CONFIG.REGION });
 
   const command = new SendEmailCommand({
-    Destination: {
-      ToAddresses: [to],
-    },
+    Destination: { ToAddresses: [to] },
     Message: {
-      Subject: {
-        Data: subject,
-        Charset: 'UTF-8',
-      },
-      Body: {
-        Text: {
-          Data: body,
-          Charset: 'UTF-8',
-        },
-      },
+      Subject: { Data: subject, Charset: 'UTF-8' },
+      Body: { Text: { Data: body, Charset: 'UTF-8' } },
     },
     Source: CONFIG.SES_SENDER,
   });
 
-  const response = await ses.send(command);
-  console.log('📨 Email sent via SES. Message ID:', response.MessageId);
+  const result = await ses.send(command);
+  console.log('📨 Email sent via SES. Message ID:', result.MessageId);
 };
