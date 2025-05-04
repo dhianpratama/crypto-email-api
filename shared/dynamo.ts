@@ -1,6 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   DynamoDBDocumentClient,
+  GetCommand,
   PutCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
@@ -14,8 +15,6 @@ const client = new DynamoDBClient({
 
 const docClient = DynamoDBDocumentClient.from(client);
 
-const TABLE_NAME = CONFIG.TABLE_NAME
-
 interface SearchRecord {
   id: string;
   crypto: string;
@@ -24,11 +23,41 @@ interface SearchRecord {
   timestamp: string;
 }
 
-export const saveToDynamo = async (record: SearchRecord) => {
+interface PriceCacheRecord {
+  id: string;
+  price: number;
+  updated: string;
+}
+
+export const TABLE_NAMES = {
+  SEARCH_HISTORY: 'CryptoSearchHistory',
+  PRICE_CACHE: 'CryptoPriceCache',
+};
+
+
+export const saveSearchRecord = async (record: SearchRecord) => {
   const command = new PutCommand({
-    TableName: TABLE_NAME,
+    TableName: TABLE_NAMES.SEARCH_HISTORY,
     Item: record,
   });
 
   await docClient.send(command);
 };
+
+export const savePriceCache = async (record: PriceCacheRecord) => {
+  const command = new PutCommand({
+    TableName: TABLE_NAMES.PRICE_CACHE,
+    Item: record,
+  });
+
+  await docClient.send(command);
+};
+
+export const getPriceCache = async (crypto: string): Promise<number> => {
+  const cached = await docClient.send(new GetCommand({
+        TableName: TABLE_NAMES.PRICE_CACHE,
+        Key: { id: crypto },
+  }));
+
+  return cached.Item?.price;
+}

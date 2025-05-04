@@ -54,6 +54,7 @@ Resources:
           TABLE_NAME: CryptoSearchHistory
           QUEUE_NAME: CryptoEmailQueue
           DYNAMO_ENDPOINT:
+          IS_LOCAL:
 
   # Lambda: SQS trigger to send email via SES
   SendEmailFromQueueFunction:

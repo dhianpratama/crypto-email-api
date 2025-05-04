@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { saveToDynamo } from '@shared/dynamo'
+import { getPriceCache, savePriceCache, saveSearchRecord } from '@shared/dynamo';
 import { sendToQueue } from '@shared/sqs';
+import { tryFetchPriceFromCG } from '@shared/coingecko';
 
 interface RequestBody {
   crypto: string;
@@ -14,25 +14,49 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
 
   const { crypto, email }: RequestBody = JSON.parse(event.body);
 
-  if (!crypto || !email) {
-    throw new Error('Missing "crypto" or "email" field');
+  if (!crypto || !email) throw new Error('Missing "crypto" or "email"');
+
+  const timestamp = new Date().toISOString();
+  let price: number | undefined;
+
+  // Step 1: Try to get price from cache
+  try {
+    price = await getPriceCache(crypto)
+  } catch (err) {
+    console.warn('⚠️ Cache lookup failed:', err);
   }
 
-  // Fetch current price from CoinGecko
-  const response = await axios.get(
-    `https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=usd`
-  );
+  // Step 2: Fallback to live CoinGecko if needed
+  if (price === undefined) {
+    try {
+      price = await tryFetchPriceFromCG(crypto)
 
-  const price = response.data?.[crypto]?.usd;
-  if (price === undefined) throw new Error(`Crypto "${crypto}" not found`);
+      if (price === undefined) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({ error: `Price for "${crypto}" not found.` }),
+        };
+      }
+
+      // Save to cache for next time
+      await savePriceCache({
+        id: crypto,
+        price,
+        updated: timestamp,
+      })
+    } catch (err) {
+      console.error('❌ Failed to fetch from CoinGecko:', err);
+      return {
+        statusCode: 502,
+        body: JSON.stringify({ error: 'Unable to fetch price from CoinGecko.' }),
+      };
+    }
+  }
 
   const id = uuidv4();
-  const timestamp = new Date().toISOString();
 
-  console.log('>>> PRICE: ', price)
-
-  // Save to DynamoDB
-  await saveToDynamo({
+  // Step 3: Save to search history
+  await saveSearchRecord({
     id,
     crypto,
     email,
@@ -40,14 +64,17 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
     timestamp,
   });
 
-  // // Send to SQS for email
-  // await sendToQueue({
-  //   id,
-  //   crypto,
-  //   email,
-  //   price,
-  //   timestamp,
-  // });
+  // Step 4: Queue email
+  await sendToQueue({
+    id,
+    crypto,
+    email,
+    price,
+    timestamp,
+  });
 
-  return { id, crypto, price, email, timestamp };
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: 'Queued for email', crypto, price, email }),
+  };
 };

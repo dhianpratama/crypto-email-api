@@ -1,4 +1,5 @@
 import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
+import { CONFIG } from './config';
 
 const sqsClient = new SQSClient({});
 const QUEUE_URL = process.env.QUEUE_URL || '';
@@ -12,7 +13,12 @@ interface QueueMessage {
 }
 
 export const sendToQueue = async (msg: QueueMessage) => {
-  if (!QUEUE_URL) {
+  if (CONFIG.IS_LOCAL) {
+    console.log('📥 [MOCK] Queued message to SQS:', msg);
+    return;
+  }
+
+  if (!CONFIG.QUEUE_URL) {
     throw new Error('SQS QUEUE_URL is not defined');
   }
 
