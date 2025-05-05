@@ -1,0 +1,19 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "CryptoAlertStagingStack"
+region = "ap-southeast-2"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Env=staging"
+no_confirm_changeset = true
+no_fail_on_empty_changeset = true
+resolve_s3 = true
+
+[prod.deploy.parameters]
+stack_name = "CryptoAlertProdStack"
+region = "ap-southeast-2"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Env=prod"
+no_confirm_changeset = true
+no_fail_on_empty_changeset = true
+resolve_s3 = true

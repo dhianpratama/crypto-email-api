@@ -8,12 +8,11 @@ import {
   ScanCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from '@shared/config';
-import { TABLE_NAMES } from '@shared/dynamo';
 
 const docClient = DynamoDBDocumentClient.from(
   new DynamoDBClient({
     region: CONFIG.REGION,
-    endpoint: CONFIG.DYNAMO_ENDPOINT,
+    ...(CONFIG.DYNAMO_ENDPOINT ? { endpoint: CONFIG.DYNAMO_ENDPOINT } : {}),
   })
 );
 
@@ -35,7 +34,7 @@ export const handleGetSearchHistory = async (
     if (emailFilter) {
       // Use GSI for efficient email filtering
       const queryParams: QueryCommandInput = {
-        TableName: TABLE_NAMES.SEARCH_HISTORY,
+        TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
         IndexName: 'EmailIndex',
         KeyConditionExpression: '#email = :email',
         ExpressionAttributeNames: {
@@ -54,7 +53,7 @@ export const handleGetSearchHistory = async (
     } else {
       // Fall back to full scan
       const scanParams: ScanCommandInput = {
-        TableName: TABLE_NAMES.SEARCH_HISTORY,
+        TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
         Limit: limit,
         ExclusiveStartKey: startKey,
       };

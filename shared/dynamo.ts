@@ -2,11 +2,9 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
 
-console.log('>>> CONFIG: >>> ', CONFIG);
-
 const client = new DynamoDBClient({
   region: CONFIG.REGION,
-  endpoint: CONFIG.DYNAMO_ENDPOINT,
+  ...(CONFIG.DYNAMO_ENDPOINT ? { endpoint: CONFIG.DYNAMO_ENDPOINT } : {}),
 });
 
 const docClient = DynamoDBDocumentClient.from(client);
@@ -25,14 +23,9 @@ interface PriceCacheRecord {
   updated: string;
 }
 
-export const TABLE_NAMES = {
-  SEARCH_HISTORY: 'CryptoSearchHistory',
-  PRICE_CACHE: 'CryptoPriceCache',
-};
-
 export const saveSearchRecord = async (record: SearchRecord) => {
   const command = new PutCommand({
-    TableName: TABLE_NAMES.SEARCH_HISTORY,
+    TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
     Item: record,
   });
 
@@ -41,7 +34,7 @@ export const saveSearchRecord = async (record: SearchRecord) => {
 
 export const savePriceCache = async (record: PriceCacheRecord) => {
   const command = new PutCommand({
-    TableName: TABLE_NAMES.PRICE_CACHE,
+    TableName: CONFIG.TABLE_NAMES.PRICE_CACHE,
     Item: record,
   });
 
@@ -51,7 +44,7 @@ export const savePriceCache = async (record: PriceCacheRecord) => {
 export const getPriceCache = async (crypto: string): Promise<number> => {
   const cached = await docClient.send(
     new GetCommand({
-      TableName: TABLE_NAMES.PRICE_CACHE,
+      TableName: CONFIG.TABLE_NAMES.PRICE_CACHE,
       Key: { id: crypto },
     })
   );
@@ -62,7 +55,7 @@ export const getPriceCache = async (crypto: string): Promise<number> => {
 export const getCachedCoinIds = async (): Promise<string[]> => {
   const result = await client.send(
     new ScanCommand({
-      TableName: TABLE_NAMES.PRICE_CACHE,
+      TableName: CONFIG.TABLE_NAMES.PRICE_CACHE,
       ProjectionExpression: 'id',
     })
   );

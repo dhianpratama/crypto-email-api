@@ -1,6 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { handleCryptoRequest } from './index';
 
+import { CONFIG } from '@shared/config';
+
+console.log('>>> process.env: ', process.env)
+
+console.log('>>> THE CONFIG: ', CONFIG)
+
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const result = await handleCryptoRequest(event);

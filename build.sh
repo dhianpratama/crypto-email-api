@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Building all TypeScript services..."
+echo "Building all services..."
 
 for service in services/*/; do
   echo "Building $service..."
