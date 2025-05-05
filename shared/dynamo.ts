@@ -1,39 +1,38 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+  ScanCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
-
-console.log('>>> CONFIG: >>> ', CONFIG);
+import { SearchRecord, PriceCacheRecord } from './types';
 
 const client = new DynamoDBClient({
   region: CONFIG.REGION,
-  endpoint: CONFIG.DYNAMO_ENDPOINT,
+  ...(CONFIG.DYNAMO_ENDPOINT ? { endpoint: CONFIG.DYNAMO_ENDPOINT } : {}),
 });
 
 const docClient = DynamoDBDocumentClient.from(client);
 
-interface SearchRecord {
-  id: string;
-  crypto: string;
-  email: string;
-  price: number;
-  timestamp: string;
-}
-
-interface PriceCacheRecord {
-  id: string;
-  price: number;
-  updated: string;
-}
-
-export const TABLE_NAMES = {
-  SEARCH_HISTORY: 'CryptoSearchHistory',
-  PRICE_CACHE: 'CryptoPriceCache',
-};
-
 export const saveSearchRecord = async (record: SearchRecord) => {
   const command = new PutCommand({
-    TableName: TABLE_NAMES.SEARCH_HISTORY,
+    TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
     Item: record,
+  });
+
+  await docClient.send(command);
+};
+
+export const updateSearchPrice = async (id: string, price?: number) => {
+  const command = new UpdateCommand({
+    TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
+    Key: { id },
+    UpdateExpression: 'SET price = :price, source = :source',
+    ExpressionAttributeValues: {
+      ':price': price,
+    },
   });
 
   await docClient.send(command);
@@ -41,7 +40,7 @@ export const saveSearchRecord = async (record: SearchRecord) => {
 
 export const savePriceCache = async (record: PriceCacheRecord) => {
   const command = new PutCommand({
-    TableName: TABLE_NAMES.PRICE_CACHE,
+    TableName: CONFIG.TABLE_NAMES.PRICE_CACHE,
     Item: record,
   });
 
@@ -51,7 +50,7 @@ export const savePriceCache = async (record: PriceCacheRecord) => {
 export const getPriceCache = async (crypto: string): Promise<number> => {
   const cached = await docClient.send(
     new GetCommand({
-      TableName: TABLE_NAMES.PRICE_CACHE,
+      TableName: CONFIG.TABLE_NAMES.PRICE_CACHE,
       Key: { id: crypto },
     })
   );
@@ -62,7 +61,7 @@ export const getPriceCache = async (crypto: string): Promise<number> => {
 export const getCachedCoinIds = async (): Promise<string[]> => {
   const result = await client.send(
     new ScanCommand({
-      TableName: TABLE_NAMES.PRICE_CACHE,
+      TableName: CONFIG.TABLE_NAMES.PRICE_CACHE,
       ProjectionExpression: 'id',
     })
   );

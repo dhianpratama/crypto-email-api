@@ -8,7 +8,9 @@
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npx eslint . --ext .ts --fix",
     "pretty": "npx prettier . --write",
-    "init-local": "ts-node scripts/init-local-dynamo.ts"
+    "init-local": "ts-node scripts/init-local-dynamo.ts",
+    "build": "./build.sh",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +29,15 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.5.1",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
+  },
+  "lint-staged": {
+    "*.{ts,js,json}": [
+      "npm run pretty",
+      "npm run lint:fix"
+    ]
   }
 }
