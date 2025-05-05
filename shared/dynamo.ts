@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
 
 console.log('>>> CONFIG: >>> ', CONFIG);
@@ -57,4 +57,14 @@ export const getPriceCache = async (crypto: string): Promise<number> => {
   );
 
   return cached.Item?.price;
+};
+
+export const getCachedCoinIds = async (): Promise<string[]> => {
+  const result = await client.send(
+    new ScanCommand({
+      TableName: TABLE_NAMES.PRICE_CACHE,
+      ProjectionExpression: 'id',
+    })
+  );
+  return result.Items?.map((item) => item.id) ?? [];
 };

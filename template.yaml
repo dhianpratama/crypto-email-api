@@ -120,6 +120,27 @@ Resources:
           DYNAMO_ENDPOINT:
           IS_LOCAL:
 
+  # Lambda: Scheduled lambda to fetch prices
+  FetchCryptoPricesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: FetchCryptoPrices
+      CodeUri: services/fetchCryptoPrices
+      Handler: dist/handler.handler
+      Events:
+        PriceTimer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(5 minutes)
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: CryptoPriceCache
+      Environment:
+        Variables:
+          AWS_REGION: 'ap-southeast-2'
+          DYNAMO_ENDPOINT:
+
+
 Outputs:
   ApiUrl:
     Description: 'API Gateway endpoint'
