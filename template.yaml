@@ -25,7 +25,7 @@ Globals:
         QUEUE_URL: !Ref CryptoEmailQueue
         DYNAMO_ENDPOINT: ''
         IS_LOCAL: 'false'
-        SES_SENDER: 'muthidp@gmail.com'
+        SES_SENDER: 'dhianpratama.m@gmail.com'
 
 Resources:
   CryptoSearchHistoryTable:

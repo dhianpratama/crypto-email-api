@@ -31,7 +31,7 @@ Base URL: https://r704vaq58l.execute-api.ap-southeast-2.amazonaws.com/Prod
 
 #### ✅ Step-by-Step: Request Crypto Price Email
 
-1. **Contact me** via email: `dhianpratana.m@gmail.com`  
+1. **Contact me** via email: `dhianpratama.m@gmail.com`  
    👉 Include the email address you plan to test with.
 
 2. **Once you're verified**, make a POST request:
