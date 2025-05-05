@@ -24,6 +24,7 @@ Base URL: https://r704vaq58l.execute-api.ap-southeast-2.amazonaws.com/Prod
 ```
 
 > 🔐 **Important:** This system uses Amazon SES in **sandbox mode**, which means:
+>
 > - Only **verified email addresses** can receive emails
 > - You must **contact the project owner first** so your email can be verified
 
@@ -67,13 +68,12 @@ curl https://r704vaq58l.execute-api.ap-southeast-2.amazonaws.com/Prod/search-his
 
 Optional query parameters:
 
-| Parameter | Example             | Description                         |
-|-----------|---------------------|-------------------------------------|
-| `email`   | your@example.com    | Filter results by email             |
-| `limit`   | 10                  | Max number of results to return     |
-| `sort`    | asc / desc          | Sort by timestamp                   |
-| `startKey`| (encoded string)    | For pagination                      |
-
+| Parameter  | Example          | Description                     |
+| ---------- | ---------------- | ------------------------------- |
+| `email`    | your@example.com | Filter results by email         |
+| `limit`    | 10               | Max number of results to return |
+| `sort`     | asc / desc       | Sort by timestamp               |
+| `startKey` | (encoded string) | For pagination                  |
 
 ## 🧭 Architecture Overview
 
@@ -194,14 +194,14 @@ sam local invoke GetPriceAndQueueEmailFunction --event events/priceRequest.json 
 
 Set via `template.yaml` and/or `env.json`.
 
-| Variable           | Description                        |
-|--------------------|------------------------------------|
-| `SEARCH_HISTORY_TABLE`       | Search history table               |
-| `PRICE_CACHE_TABLE`| Price cache table name             |
-| `QUEUE_URL`        | SQS queue URL                      |
-| `DYNAMO_ENDPOINT`  | DynamoDB local endpoint            |
-| `SES_SENDER`       | Verified SES sender email address  |
-| `IS_LOCAL`         | `"true"` for local testing         |
+| Variable               | Description                       |
+| ---------------------- | --------------------------------- |
+| `SEARCH_HISTORY_TABLE` | Search history table              |
+| `PRICE_CACHE_TABLE`    | Price cache table name            |
+| `QUEUE_URL`            | SQS queue URL                     |
+| `DYNAMO_ENDPOINT`      | DynamoDB local endpoint           |
+| `SES_SENDER`           | Verified SES sender email address |
+| `IS_LOCAL`             | `"true"` for local testing        |
 
 ---
 
@@ -245,10 +245,10 @@ Ensure all sender/recipient emails are **verified** in [SES Sandbox](https://doc
 
 ## 📚 API Endpoints
 
-| Method | Path            | Description                          |
-|--------|------------------|--------------------------------------|
-| POST   | `/crypto-price`  | Queue a price alert email            |
-| GET    | `/search-history`| Retrieve search history (with filters) |
+| Method | Path              | Description                            |
+| ------ | ----------------- | -------------------------------------- |
+| POST   | `/crypto-price`   | Queue a price alert email              |
+| GET    | `/search-history` | Retrieve search history (with filters) |
 
 ---
 
@@ -265,4 +265,3 @@ Ensure all sender/recipient emails are **verified** in [SES Sandbox](https://doc
 [LinkedIn](https://linkedin.com/dhianpratama) | [GitHub](https://github.com/dhianpratama) | [Email](mailto:dhianpratama.m@gmail.com)
 
 ---
-
