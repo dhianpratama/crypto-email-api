@@ -3,7 +3,7 @@ import { handleCryptoRequest } from './index';
 
 import { CONFIG } from '@shared/config';
 
-console.log('>>> process.env: ', process.env)
+console.log('>>> process.env xx: ', process.env)
 
 console.log('>>> THE CONFIG: ', CONFIG)
 

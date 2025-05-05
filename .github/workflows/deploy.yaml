@@ -12,7 +12,10 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [22]
+    
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}
 
     steps:
       - name: Checkout code
