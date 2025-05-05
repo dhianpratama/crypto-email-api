@@ -1,24 +1,23 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { handleCryptoRequest } from './index';
-
-import { CONFIG } from '@shared/config';
-
-console.log('>>> process.env xx: ', process.env)
-
-console.log('>>> THE CONFIG: ', CONFIG)
+import { AppError } from '@shared/errors';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
-    const result = await handleCryptoRequest(event);
+    await handleCryptoRequest(event);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Queued for email', result }),
+      body: JSON.stringify({
+        message: 'Request successfully sent. Price information will be sent to your email',
+      }),
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error('Error in handler:', err);
+    const statusCode = err instanceof AppError ? err.statusCode : 500;
+    const message = err.message || 'Unexpected error';
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      statusCode,
+      body: JSON.stringify({ error: message }),
     };
   }
 };

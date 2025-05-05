@@ -7,5 +7,5 @@ export const CONFIG = {
   TABLE_NAMES: {
     SEARCH_HISTORY: process.env.SEARCH_HISTORY_TABLE || 'CryptoSearchHistory',
     PRICE_CACHE: process.env.PRICE_CACHE_TABLE || 'CryptoPriceCache',
-  }
+  },
 };

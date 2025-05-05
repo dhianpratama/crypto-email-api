@@ -3,18 +3,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { getPriceCache, savePriceCache, saveSearchRecord } from '@shared/dynamo';
 import { sendToQueue } from '@shared/sqs';
 import { tryFetchPriceFromCG } from '@shared/coingecko';
+import { ExternalServiceError, NotFoundError, ValidationError } from '@shared/errors';
 
 interface RequestBody {
   crypto: string;
   email: string;
 }
 
-export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
-  if (!event.body) throw new Error('Missing request body');
+export const handleCryptoRequest = async (event: APIGatewayProxyEvent): Promise<void> => {
+  if (!event.body) throw new ValidationError('Missing request body');
 
   const { crypto, email }: RequestBody = JSON.parse(event.body);
 
-  if (!crypto || !email) throw new Error('Missing "crypto" or "email"');
+  if (!crypto || !email) throw new ValidationError('Missing "crypto" or "email"');
 
   const timestamp = new Date().toISOString();
   let price: number | undefined;
@@ -32,10 +33,7 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
       price = await tryFetchPriceFromCG(crypto);
 
       if (price === undefined) {
-        return {
-          statusCode: 404,
-          body: JSON.stringify({ error: `Price for "${crypto}" not found.` }),
-        };
+        throw new NotFoundError(`Price for "${crypto}" not found.`);
       }
 
       // Save to cache for next time
@@ -44,12 +42,8 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
         price,
         updated: timestamp,
       });
-    } catch (err) {
-      console.error('❌ Failed to fetch from CoinGecko:', err);
-      return {
-        statusCode: 502,
-        body: JSON.stringify({ error: 'Unable to fetch price from CoinGecko.' }),
-      };
+    } catch {
+      throw new ExternalServiceError('Unable to fetch price from external service.');
     }
   }
 
@@ -72,9 +66,4 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent) => {
     price,
     timestamp,
   });
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ message: 'Queued for email', crypto, price, email }),
-  };
 };

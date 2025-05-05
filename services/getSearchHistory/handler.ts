@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { handleGetSearchHistory } from './index';
+import { AppError } from '@shared/errors';
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -8,11 +9,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       statusCode: 200,
       body: JSON.stringify({ message: 'Search history successfully fetched', result }),
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.error('Error in handler:', err);
+    const statusCode = err instanceof AppError ? err.statusCode : 500;
+    const message = err.message || 'Unexpected error';
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      statusCode,
+      body: JSON.stringify({ error: message }),
     };
   }
 };

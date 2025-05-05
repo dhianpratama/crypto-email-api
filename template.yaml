@@ -20,19 +20,18 @@ Globals:
     MemorySize: 128
     Environment:
       Variables:
-        SEARCH_HISTORY_TABLE: !Sub "CryptoSearchHistory-${Env}"
-        PRICE_CACHE_TABLE: !Sub "CryptoPriceCache-${Env}"
+        SEARCH_HISTORY_TABLE: !Sub 'CryptoSearchHistory-${Env}'
+        PRICE_CACHE_TABLE: !Sub 'CryptoPriceCache-${Env}'
         QUEUE_URL: !Ref CryptoEmailQueue
-        DYNAMO_ENDPOINT: ""
-        IS_LOCAL: "false"
-        SES_SENDER: "muthidp@gmail.com"
+        DYNAMO_ENDPOINT: ''
+        IS_LOCAL: 'false'
+        SES_SENDER: 'muthidp@gmail.com'
 
 Resources:
-
   CryptoSearchHistoryTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub "CryptoSearchHistory-${Env}"
+      TableName: !Sub 'CryptoSearchHistory-${Env}'
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
@@ -53,7 +52,7 @@ Resources:
   CryptoPriceCacheTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub "CryptoPriceCache-${Env}"
+      TableName: !Sub 'CryptoPriceCache-${Env}'
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
@@ -65,12 +64,12 @@ Resources:
   CryptoEmailQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Sub "CryptoEmailQueue-${Env}"
+      QueueName: !Sub 'CryptoEmailQueue-${Env}'
 
   GetPriceAndQueueEmailFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "GetPriceAndQueueEmail-${Env}"
+      FunctionName: !Sub 'GetPriceAndQueueEmail-${Env}'
       CodeUri: services/getPriceAndQueueEmail
       Handler: dist/handler.handler
       Events:
@@ -81,16 +80,16 @@ Resources:
             Method: post
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Sub "CryptoSearchHistory-${Env}"
+            TableName: !Sub 'CryptoSearchHistory-${Env}'
         - DynamoDBCrudPolicy:
-            TableName: !Sub "CryptoPriceCache-${Env}"
+            TableName: !Sub 'CryptoPriceCache-${Env}'
         - SQSSendMessagePolicy:
-            QueueName: !Sub "CryptoEmailQueue-${Env}"
+            QueueName: !Sub 'CryptoEmailQueue-${Env}'
 
   GetSearchHistoryFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "GetSearchHistory-${Env}"
+      FunctionName: !Sub 'GetSearchHistory-${Env}'
       CodeUri: services/getSearchHistory
       Handler: dist/handler.handler
       Events:
@@ -101,12 +100,12 @@ Resources:
             Method: get
       Policies:
         - DynamoDBReadPolicy:
-            TableName: !Sub "CryptoSearchHistory-${Env}"
+            TableName: !Sub 'CryptoSearchHistory-${Env}'
 
   SendEmailFromQueueFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "SendEmailFromQueue-${Env}"
+      FunctionName: !Sub 'SendEmailFromQueue-${Env}'
       CodeUri: services/sendEmailFromQueue
       Handler: dist/handler.handler
       Events:
@@ -116,12 +115,12 @@ Resources:
             Queue: !GetAtt CryptoEmailQueue.Arn
       Policies:
         - SESCrudPolicy:
-            IdentityName: "*"
+            IdentityName: '*'
 
   FetchCryptoPricesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "FetchCryptoPrices-${Env}"
+      FunctionName: !Sub 'FetchCryptoPrices-${Env}'
       CodeUri: services/fetchCryptoPrices
       Handler: dist/handler.handler
       Events:
@@ -131,9 +130,9 @@ Resources:
             Schedule: rate(5 minutes)
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Sub "CryptoPriceCache-${Env}"
+            TableName: !Sub 'CryptoPriceCache-${Env}'
 
 Outputs:
   ApiUrl:
-    Description: "API Gateway endpoint"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Description: 'API Gateway endpoint'
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'

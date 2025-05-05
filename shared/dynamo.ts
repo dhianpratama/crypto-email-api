@@ -1,6 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
+import { SearchRecord, PriceCacheRecord } from './types';
 
 const client = new DynamoDBClient({
   region: CONFIG.REGION,
@@ -8,20 +9,6 @@ const client = new DynamoDBClient({
 });
 
 const docClient = DynamoDBDocumentClient.from(client);
-
-interface SearchRecord {
-  id: string;
-  crypto: string;
-  email: string;
-  price: number;
-  timestamp: string;
-}
-
-interface PriceCacheRecord {
-  id: string;
-  price: number;
-  updated: string;
-}
 
 export const saveSearchRecord = async (record: SearchRecord) => {
   const command = new PutCommand({
