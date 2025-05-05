@@ -8,7 +8,7 @@ interface QueueMessage {
   id: string;
   crypto: string;
   email: string;
-  price: number;
+  price?: number;
   timestamp: string;
 }
 

@@ -7,13 +7,13 @@ export type SearchRecord = {
   id: string;
   crypto: string;
   email: string;
-  price: number;
+  price?: number;
   timestamp: string;
 };
 
 export type PriceCacheRecord = {
   id: string;
-  price: number;
+  price?: number;
   updated: string;
 };
 

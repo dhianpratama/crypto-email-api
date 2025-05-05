@@ -8,7 +8,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: 'Request successfully sent. Price information will be sent to your email',
+        message: 'Price request received. You will get an email shortly.',
       }),
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

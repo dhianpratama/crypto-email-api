@@ -1,5 +1,11 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+  ScanCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
 import { SearchRecord, PriceCacheRecord } from './types';
 
@@ -14,6 +20,19 @@ export const saveSearchRecord = async (record: SearchRecord) => {
   const command = new PutCommand({
     TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
     Item: record,
+  });
+
+  await docClient.send(command);
+};
+
+export const updateSearchPrice = async (id: string, price?: number) => {
+  const command = new UpdateCommand({
+    TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
+    Key: { id },
+    UpdateExpression: 'SET price = :price, source = :source',
+    ExpressionAttributeValues: {
+      ':price': price,
+    },
   });
 
   await docClient.send(command);

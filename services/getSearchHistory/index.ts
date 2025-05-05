@@ -29,7 +29,8 @@ export const handleGetSearchHistory = async (
     : undefined;
 
   let items: SearchRecord[] = [];
-  let lastEvaluatedKey: Record<string, unknown> | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let lastEvaluatedKey: Record<string, any> | undefined;
 
   if (emailFilter) {
     // Use GSI for efficient email filtering
