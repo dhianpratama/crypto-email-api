@@ -7,7 +7,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const result = await handleGetSearchHistory(event);
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Search history successfully fetched', result }),
+      body: JSON.stringify({ message: 'Search history successfully fetched', ...result }),
     };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

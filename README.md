@@ -24,6 +24,7 @@ Base URL: https://r704vaq58l.execute-api.ap-southeast-2.amazonaws.com/Prod
 ```
 
 > 🔐 **Important:** This system uses Amazon SES in **sandbox mode**, which means:
+>
 > - Only **verified email addresses** can receive emails
 > - You must **contact the project owner first** so your email can be verified
 
@@ -31,7 +32,7 @@ Base URL: https://r704vaq58l.execute-api.ap-southeast-2.amazonaws.com/Prod
 
 #### ✅ Step-by-Step: Request Crypto Price Email
 
-1. **Contact me** via email: `dhianpratana.m@gmail.com`  
+1. **Contact me** via email: `dhianpratama.m@gmail.com`  
    👉 Include the email address you plan to test with.
 
 2. **Once you're verified**, make a POST request:
@@ -67,13 +68,12 @@ curl https://r704vaq58l.execute-api.ap-southeast-2.amazonaws.com/Prod/search-his
 
 Optional query parameters:
 
-| Parameter | Example             | Description                         |
-|-----------|---------------------|-------------------------------------|
-| `email`   | your@example.com    | Filter results by email             |
-| `limit`   | 10                  | Max number of results to return     |
-| `sort`    | asc / desc          | Sort by timestamp                   |
-| `startKey`| (encoded string)    | For pagination                      |
-
+| Parameter  | Example          | Description                     |
+| ---------- | ---------------- | ------------------------------- |
+| `email`    | your@example.com | Filter results by email         |
+| `limit`    | 10               | Max number of results to return |
+| `sort`     | asc / desc       | Sort by timestamp               |
+| `startKey` | (encoded string) | For pagination                  |
 
 ## 🧭 Architecture Overview
 
@@ -109,7 +109,7 @@ This flow handles user requests to receive crypto price updates via email. It is
 - **Caching** minimizes external API pressure
 - **Audit trail**: search and price history are stored
 
-[View flowchart in Mermaid Live Editor](https://mermaid.live/edit#pako:eNqFUV1vmzAU_StXftjLSFe-kpSHTSnQqNI0tWKZtJE8uHATrAYbGdM2i_LfZ2zasWXSeDE-95zje889kkKUSCKy3YvnoqJSwddkzUF_i3zVooSKqRY-FPLQKDFpJCtwA5PJR7jOF3e3sKQKn-lhYyXXphLnS1R3PXPBy_sOO0xryvbwmdYPJdVUS267h52kTTXgEfxTZbn9F7v5N7pnpX4R0Bi-A9vWZkTy9OMcZU9arW4TeA-K1dgqWjdjmp9n9AmhRSqLCpSA5MBpLRI9AXABds4RP8gz5CVop5busBdk9xk8M1UBK52hD8f2Neg0_3XU2Obi2sOzh2-P4I0UGCDJtXMEsXE0EZgwbOipacOgN1LUpvLfXM8lvwdL3TyusHiEghbVeOLUO5plAOO29uk0Kvr5DSod3FY7QiwYX2qP8R7SwAashizP_cN81ZhdDjuQWAhZ2kj_jj-d2vjt2p8YhSzNzmNObUY25tQbwD5u-I6tRcMx-kVY0K4iDf6khPY6JQ7ZSVaSSMkOHVKj1G3oKzn2xDVRFda4JpH-Lal8XJM1P2lNQ_kPIepXmRTdriLRlu5bfevM7AmjelX1Gyr1MChj0XFFIs81HiQ6khcSuWF4cRV4_tyfu-Gl500dciCRBv1ZcDVzg5nve4E7PTnkp3n08mI-C0-_AC2DJ9w)
+[View flowchart in Mermaid Live Editor](https://mermaid.live/edit#pako:eNqFVN1umzAYfZVPvtgVySCYlHKxKSU0q9R1qWgmbZALF5xgJWBkTLMsyrvP2EnGlknzjfHx-f7OQT6gjOcUBWi15busIELCyzStQK1JsmiogIZWeQPzL_ELvM_EvpZ8UAuW0SUMBh_gLpnMH2BGJN2R_dIE3umbMJlROe-Ykyp_bmlLo5KwLTyS8jUnimrITfu6FqQuTngA_4wy3G6FTvKVbFmuKgLVCd-BaWvZI41U8YqKjrRYPEyBVDlIVtJGkrLuE90kJm8UJIeYEpEV8Ik1kos9DKDiYAbt0XES0y6Voj_HAbDcMk1Ypx6sqyqKfh41NLo4ZhuZzTUbvpCwBqaJLhDqrFoCLYYRPdJdaPRe8FLf_FfX65Dfc0VO8sj5pq3NxMAqyEhW9EePRgdtC6x4qxQ4Mz4eexQ3uadSaWiSrFQdCDmrZjTb9N2J8EV0w7yq5SWLWjv8lyk7JosrU6KxMcX8Xm-MQBzF1-pHRjqjfjQ6gZ0L8I02BvX66BM3oHEown9SPHMcpxWy0FqwHAVStNRCJRWqEXVEh46aIlnQkqYoUJ85EZsUpdVRxdSk-s55eQ4TvF0XKFiRbaNOrR5_yojysLygQo1DRagMkCjwHZ0DBQf0AwWeO7y1vbFr-2PXwbbvYAvtUTBwbGeIb1yMbdvH_sgb46OFfuq6ztB13LGDvRvXxre-a3sWojlTQn82T4J-GY6_ADPlPPk)
 
 ---
 
@@ -134,7 +134,7 @@ This background Lambda ensures that frequently requested coin prices are availab
 - Reduces CoinGecko API usage during spikes
 - Adapts to trending coins based on user behavior
 
-[View flowchart in Mermaid Live Editor](https://mermaid.live/edit#pako:eNp1Uk1v2zAM_SuErnMNfyWOfRiwxOgwoAM2dKfZOcgWYwuxJEOWtnpB_vsUqy2yw3ihSPE9PVK8kE4xJCU5jep3N1Bt4EfVSHD2qX7uBmR2RAZG875HDRj2YQD4C_UCGxBcHuHh4SPs60c03XDQy2TUN807nB-t7AxX8thITzfbttd0GuCJipbREv4L8fU328f1k6IMGJ6oHQ10iksY-WyOdzVJ_d3e9OCLu-Cyh4463YDSicb5vjKtD0q0XOI74QdgfO6U68c1ubJ_qf6BZL4zmFaFcNJKwMHVfcburKBdoLXj-R6wqZ-N0gh2YtQ40legY64WSYWq9l7fKwYlexvQ3o8y9i7xLvUu827TSBKQXnNGSqMtBkSgFvQWksuNpSFmQIENKd2RUX1uSCOvDjNR-VMp8QbTyvYDKU90nF3ktVacug8S71nttKE-KCsNKdMoTVcWUl7ICymTNAnTXZQV0TbOiywpsoAspNxGYV5Excblkm2SF8U1IH_Wd-Mwyottnu2yXZwVRb7LA4KMu1l99Qu47uH1Lw3Fy84)
+[View flowchart in Mermaid Live Editor](https://mermaid.live/edit#pako:eNp1Uk1vnDAU_CtPvpYgPpfCIVJ2UapKqdQqPQX2YPBbsBZsZOw2dLX_vQYn7fZQX8YfM-N5z76QVjIkBTkN8mfbU6Xhe1kLsOOhem57ZGZABlrxrkMF6He-B_gD1QIpjFwc4e7uHvbVI-q2P6hl0vKr4i3Oj0a0mktxrIWzm03TKTr18ETHhtEC_itx_HXsw-pJUgYMT9QMGlrJBQx81scbTlR9M2sefLUHXHTQUpsbUNjQON8y4-ogx4YL_GP4ARifW2nrsUVu7p_LfySJqwymLSGclBzhYHmfsD1LaBZozHC-FaTVs5YKwUyMamv6JrTO5SLoKMu9y_emQcHeG7R3rQwdRA5iB4mDtBbEI53ijBRaGfTIiGqk65JcVpea6B5HrElhp4yqc01qcbWaiYoXKcd3mZKm60lxosNsVy5ryal9oL8UGw3VQRqhSZEEmwUpLuSVFGGe-0kcp3mQfdxlUZzFHlnW7cTPd3mQRFEYBpnFq0d-bbcGfhKmcRylcRrnuyDPco8g47ZTX9z3237h9Td1zssn)
 
 ---
 
@@ -194,14 +194,14 @@ sam local invoke GetPriceAndQueueEmailFunction --event events/priceRequest.json 
 
 Set via `template.yaml` and/or `env.json`.
 
-| Variable           | Description                        |
-|--------------------|------------------------------------|
-| `SEARCH_HISTORY_TABLE`       | Search history table               |
-| `PRICE_CACHE_TABLE`| Price cache table name             |
-| `QUEUE_URL`        | SQS queue URL                      |
-| `DYNAMO_ENDPOINT`  | DynamoDB local endpoint            |
-| `SES_SENDER`       | Verified SES sender email address  |
-| `IS_LOCAL`         | `"true"` for local testing         |
+| Variable               | Description                       |
+| ---------------------- | --------------------------------- |
+| `SEARCH_HISTORY_TABLE` | Search history table              |
+| `PRICE_CACHE_TABLE`    | Price cache table name            |
+| `QUEUE_URL`            | SQS queue URL                     |
+| `DYNAMO_ENDPOINT`      | DynamoDB local endpoint           |
+| `SES_SENDER`           | Verified SES sender email address |
+| `IS_LOCAL`             | `"true"` for local testing        |
 
 ---
 
@@ -245,10 +245,10 @@ Ensure all sender/recipient emails are **verified** in [SES Sandbox](https://doc
 
 ## 📚 API Endpoints
 
-| Method | Path            | Description                          |
-|--------|------------------|--------------------------------------|
-| POST   | `/crypto-price`  | Queue a price alert email            |
-| GET    | `/search-history`| Retrieve search history (with filters) |
+| Method | Path              | Description                            |
+| ------ | ----------------- | -------------------------------------- |
+| POST   | `/crypto-price`   | Queue a price alert email              |
+| GET    | `/search-history` | Retrieve search history (with filters) |
 
 ---
 
@@ -265,4 +265,3 @@ Ensure all sender/recipient emails are **verified** in [SES Sandbox](https://doc
 [LinkedIn](https://linkedin.com/dhianpratama) | [GitHub](https://github.com/dhianpratama) | [Email](mailto:dhianpratama.m@gmail.com)
 
 ---
-

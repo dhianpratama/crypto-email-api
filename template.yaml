@@ -25,7 +25,7 @@ Globals:
         QUEUE_URL: !Ref CryptoEmailQueue
         DYNAMO_ENDPOINT: ''
         IS_LOCAL: 'false'
-        SES_SENDER: 'muthidp@gmail.com'
+        SES_SENDER: 'dhianpratama.m@gmail.com'
 
 Resources:
   CryptoSearchHistoryTable:
@@ -81,8 +81,6 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub 'CryptoSearchHistory-${Env}'
-        - DynamoDBCrudPolicy:
-            TableName: !Sub 'CryptoPriceCache-${Env}'
         - SQSSendMessagePolicy:
             QueueName: !Sub 'CryptoEmailQueue-${Env}'
 
@@ -116,6 +114,10 @@ Resources:
       Policies:
         - SESCrudPolicy:
             IdentityName: '*'
+        - DynamoDBCrudPolicy:
+            TableName: !Sub 'CryptoSearchHistory-${Env}'
+        - DynamoDBCrudPolicy:
+            TableName: !Sub 'CryptoPriceCache-${Env}'
 
   FetchCryptoPricesFunction:
     Type: AWS::Serverless::Function

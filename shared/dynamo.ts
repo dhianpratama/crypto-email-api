@@ -7,7 +7,7 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from './config';
-import { SearchRecord, PriceCacheRecord } from './types';
+import { SearchRecord, PriceCacheRecord, SearchStatus, UpdateSearchRecordParams } from './types';
 
 const client = new DynamoDBClient({
   region: CONFIG.REGION,
@@ -25,13 +25,30 @@ export const saveSearchRecord = async (record: SearchRecord) => {
   await docClient.send(command);
 };
 
-export const updateSearchPrice = async (id: string, price?: number) => {
+export const updateSearchPrice = async (params: UpdateSearchRecordParams) => {
+  const command = new UpdateCommand({
+    TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
+    Key: { id: params.id },
+    UpdateExpression:
+      'SET price = :price, priceSource = :priceSource, status = :status, updatedAt = :updatedAt',
+    ExpressionAttributeValues: {
+      ':price': params.price,
+      ':priceSource': params.priceSource,
+      ':status': params.status,
+      ':updatedAt': new Date().toISOString(),
+    },
+  });
+
+  await docClient.send(command);
+};
+
+export const updateSearchStatus = async (id: string, status: SearchStatus) => {
   const command = new UpdateCommand({
     TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
     Key: { id },
-    UpdateExpression: 'SET price = :price, source = :source',
+    UpdateExpression: 'SET status = :status',
     ExpressionAttributeValues: {
-      ':price': price,
+      ':status': status,
     },
   });
 
