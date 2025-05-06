@@ -51,7 +51,8 @@ export const handleEmailRequest = async (event: SQSEvent): Promise<void> => {
           priceSource,
           status: SearchStatus.PRICE_FOUND,
         });
-      } catch {
+      } catch (err) {
+        console.error(err);
         throw new Error('Unable to fetch price from external service.');
       }
     }
