@@ -1,39 +1,62 @@
 import { SQSEvent } from 'aws-lambda';
 import { sendEmail } from '@shared/email';
 import { tryFetchPriceFromCG } from '@shared/coingecko';
-import { savePriceCache, updateSearchPrice } from '@shared/dynamo';
+import {
+  getPriceCache,
+  savePriceCache,
+  updateSearchPrice,
+  updateSearchStatus,
+} from '@shared/dynamo';
+import { PriceSource, SearchStatus } from '@shared/types';
 
 export const handleEmailRequest = async (event: SQSEvent): Promise<void> => {
   for (const record of event.Records) {
     const message = JSON.parse(record.body);
 
-    const { id, crypto, price, email, timestamp } = message;
+    const { id, crypto, email, timestamp } = message;
 
-    // Step 2: Fallback to live CoinGecko if needed
-    let latestPrice;
+    let price;
+
+    // Try to get price from cache
+    let priceSource;
+    try {
+      price = await getPriceCache(crypto);
+      priceSource = PriceSource.CACHE;
+    } catch (err) {
+      console.warn('⚠️ Cache lookup failed:', err);
+    }
+
     if (price === undefined) {
       try {
-        latestPrice = await tryFetchPriceFromCG(crypto);
+        price = await tryFetchPriceFromCG(crypto);
 
         if (price === undefined) {
+          await updateSearchStatus(id, SearchStatus.PRICE_UNAVAILABLE);
           throw new Error(`Price for "${crypto}" not found.`);
         }
 
         // Save to cache for next time
         await savePriceCache({
           id: crypto,
-          price: latestPrice,
+          price,
           updated: timestamp,
         });
 
         // Update price on search history
-        await updateSearchPrice(id, latestPrice);
+
+        priceSource = PriceSource.LIVE;
+        await updateSearchPrice({
+          id,
+          price,
+          priceSource,
+          status: SearchStatus.PRICE_FOUND,
+        });
       } catch {
         throw new Error('Unable to fetch price from external service.');
       }
     }
 
-    const subject = `📈 ${crypto.toUpperCase()} Price Alert`;
+    const subject = `${crypto.toUpperCase()} Price Alert`;
     const body = `
 Hello,
 
@@ -46,6 +69,11 @@ Time: ${timestamp}
 This is an automated alert from your Crypto Tracker system.
 `;
 
-    await sendEmail({ to: email, subject, body });
+    try {
+      await sendEmail({ to: email, subject, body });
+      await updateSearchStatus(id, SearchStatus.EMAIL_SENT);
+    } catch {
+      await updateSearchStatus(id, SearchStatus.EMAIL_FAILED);
+    }
   }
 };

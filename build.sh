@@ -2,6 +2,8 @@
 
 echo "Building all services..."
 
+npm run pretty && npm run lint
+
 for service in services/*/; do
   echo "Building $service..."
   cd "$service"
