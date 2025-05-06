@@ -81,8 +81,6 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub 'CryptoSearchHistory-${Env}'
-        - DynamoDBCrudPolicy:
-            TableName: !Sub 'CryptoPriceCache-${Env}'
         - SQSSendMessagePolicy:
             QueueName: !Sub 'CryptoEmailQueue-${Env}'
 
@@ -116,6 +114,10 @@ Resources:
       Policies:
         - SESCrudPolicy:
             IdentityName: '*'
+        - DynamoDBCrudPolicy:
+            TableName: !Sub 'CryptoSearchHistory-${Env}'
+        - DynamoDBCrudPolicy:
+            TableName: !Sub 'CryptoPriceCache-${Env}'
 
   FetchCryptoPricesFunction:
     Type: AWS::Serverless::Function
