@@ -1,21 +1,27 @@
 {
   "compilerOptions": {
-    "target": "ES2020", // Modern JS features
-    "module": "commonjs", // Required for Node.js and AWS Lambda
-    "rootDir": ".", // Root source directory
-    "outDir": "dist", // Where compiled files go (can be ignored by SAM)
-    "esModuleInterop": true, // Allows importing CommonJS modules like `import AWS from 'aws-sdk'`
+    "target": "ES2020",
+    "module": "commonjs",
+    "rootDir": ".",
+    "outDir": "dist",
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "types": ["node"],
-    "baseUrl": ".", // Required for paths
+    "types": ["jest", "node"],
+    "baseUrl": ".",
     "paths": {
       "@shared/*": ["shared/*"]
     }
   },
-  "include": ["services/**/*.ts", "shared/**/*.ts", "scripts/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "include": [
+    "services/**/*.ts",
+    "shared/**/*.ts",
+    "scripts/**/*",
+    "**/*.test.ts",
+    "jest.config.ts"
+  ],
+  "exclude": ["node_modules"]
 }
