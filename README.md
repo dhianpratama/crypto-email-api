@@ -256,6 +256,8 @@ Ensure all sender/recipient emails are **verified** in [SES Sandbox](https://doc
 
 - Add user auth and rate limiting
 - Add `source` in the email content to let user know whether the price comes from cache or live
+- Notify users if system fail to process
+- Support multiple FIAT currencies
 
 ---
 
