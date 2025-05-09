@@ -9,7 +9,7 @@ interface EmailPayload {
 
 export const sendEmail = async ({ to, subject, body }: EmailPayload) => {
   if (CONFIG.IS_LOCAL) {
-    console.log('📧 [MOCK] Sending email:');
+    console.log('[MOCK] Sending email:');
     console.log(`To: ${to}`);
     console.log(`Subject: ${subject}`);
     console.log(`Body:\n${body}`);
@@ -32,5 +32,5 @@ export const sendEmail = async ({ to, subject, body }: EmailPayload) => {
   });
 
   const result = await ses.send(command);
-  console.log('📨 Email sent via SES. Message ID:', result.MessageId);
+  console.log('Email sent via SES. Message ID:', result.MessageId);
 };
