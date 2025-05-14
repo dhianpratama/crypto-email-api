@@ -28,6 +28,43 @@ Globals:
         SES_SENDER: 'dhianpratama.m@gmail.com'
 
 Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub 'CryptoAlertApi-${Env}'
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt CognitoUserPool.Arn
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub 'CryptoAlertUserPool-${Env}'
+      AutoVerifiedAttributes:
+        - email
+      Schema:
+        - Name: email
+          Required: true
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireNumbers: true
+
+  CognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub 'CryptoClient-${Env}'
+      UserPoolId: !Ref CognitoUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+
   CryptoSearchHistoryTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -78,11 +115,17 @@ Resources:
           Properties:
             Path: /crypto-price
             Method: post
+            RestApiId: !Ref ApiGateway
+            Auth:
+              Authorizer: CognitoAuthorizer
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Sub 'CryptoSearchHistory-${Env}'
         - SQSSendMessagePolicy:
             QueueName: !Sub 'CryptoEmailQueue-${Env}'
+      Environment:
+        Variables:
+          FORCE_DEPLOY: 'true'
 
   GetSearchHistoryFunction:
     Type: AWS::Serverless::Function
@@ -96,9 +139,15 @@ Resources:
           Properties:
             Path: /search-history
             Method: get
+            RestApiId: !Ref ApiGateway
+            Auth:
+              Authorizer: CognitoAuthorizer
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Sub 'CryptoSearchHistory-${Env}'
+      Environment:
+        Variables:
+          FORCE_DEPLOY: 'true'
 
   SendEmailFromQueueFunction:
     Type: AWS::Serverless::Function
@@ -137,4 +186,14 @@ Resources:
 Outputs:
   ApiUrl:
     Description: 'API Gateway endpoint'
-    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
+    Export:
+      Name: !Sub 'CryptoApiEndpoint-${Env}'
+
+  CognitoUserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref CognitoUserPool
+
+  CognitoUserPoolClientId:
+    Description: Cognito App Client ID
+    Value: !Ref CognitoUserPoolClient

@@ -9,6 +9,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { CONFIG } from '@shared/config';
 import { SearchHistoryResponse, SearchRecord } from '@shared/types';
+import { AuthenticatedUser } from '@shared/withAuth';
 
 const docClient = DynamoDBDocumentClient.from(
   new DynamoDBClient({
@@ -18,10 +19,11 @@ const docClient = DynamoDBDocumentClient.from(
 );
 
 export const handleGetSearchHistory = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
+  user: AuthenticatedUser
 ): Promise<SearchHistoryResponse> => {
   const queryParams = event.queryStringParameters || {};
-  const emailFilter = queryParams.email;
+  const emailFilter = user.email;
   const limit = parseInt(queryParams.limit || '10', 10);
   const sort = (queryParams.sort || 'desc').toLowerCase();
   const startKey = queryParams.startKey
