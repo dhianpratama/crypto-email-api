@@ -30,11 +30,11 @@ export const updateSearchPrice = async (params: UpdateSearchRecordParams) => {
     TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
     Key: { id: params.id },
     UpdateExpression:
-      'SET price = :price, priceSource = :priceSource, status = :status, updatedAt = :updatedAt',
+      'SET price = :price, priceSource = :priceSource, priceStatus = :priceStatus, updatedAt = :updatedAt',
     ExpressionAttributeValues: {
       ':price': params.price,
       ':priceSource': params.priceSource,
-      ':status': params.status,
+      ':priceStatus': params.status,
       ':updatedAt': new Date().toISOString(),
     },
   });
@@ -46,9 +46,9 @@ export const updateSearchStatus = async (id: string, status: SearchStatus) => {
   const command = new UpdateCommand({
     TableName: CONFIG.TABLE_NAMES.SEARCH_HISTORY,
     Key: { id },
-    UpdateExpression: 'SET status = :status',
+    UpdateExpression: 'SET priceStatus = :priceStatus',
     ExpressionAttributeValues: {
-      ':status': status,
+      ':priceStatus': status,
     },
   });
 

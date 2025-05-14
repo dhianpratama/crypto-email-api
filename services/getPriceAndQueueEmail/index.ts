@@ -4,18 +4,22 @@ import { saveSearchRecord } from '@shared/dynamo';
 import { sendToQueue } from '@shared/sqs';
 import { ValidationError } from '@shared/errors';
 import { SearchStatus } from '@shared/types';
+import { AuthenticatedUser } from '@shared/withAuth';
 
 interface RequestBody {
   crypto: string;
   email: string;
 }
 
-export const handleCryptoRequest = async (event: APIGatewayProxyEvent): Promise<void> => {
+export const handleCryptoRequest = async (
+  event: APIGatewayProxyEvent,
+  user: AuthenticatedUser
+): Promise<void> => {
   if (!event.body) throw new ValidationError('Missing request body');
 
-  const { crypto, email }: RequestBody = JSON.parse(event.body);
+  const { crypto }: RequestBody = JSON.parse(event.body);
 
-  if (!crypto || !email) throw new ValidationError('Missing "crypto" or "email"');
+  if (!crypto) throw new ValidationError('Missing "crypto"');
 
   const timestamp = new Date().toISOString();
 
@@ -23,7 +27,7 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent): Promise<
   await saveSearchRecord({
     id,
     crypto,
-    email,
+    email: user.email,
     requestedAt: timestamp,
     status: SearchStatus.REQUESTED,
   });
@@ -32,7 +36,7 @@ export const handleCryptoRequest = async (event: APIGatewayProxyEvent): Promise<
   await sendToQueue({
     id,
     crypto,
-    email,
+    email: user.email,
     timestamp,
   });
 };
